@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AnonDrop - P2P File Sharing</title>
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --accent-primary: #008f00;
+            --accent-secondary: #006b00;
+            --border-color: #404040;
+            --success-color: #008f00;
+            --error-color: #ff0000;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .container {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        h1 {
+            color: var(--accent-primary);
+            margin-bottom: 2rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-primary);
+            color: var(--accent-primary);
+            border: 1px solid var(--accent-primary);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .key-container {
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .key-display {
+            background: var(--bg-primary);
+            padding: 12px 60px 12px 12px;
+            border-radius: 4px;
+            word-break: break-all;
+            font-family: monospace;
+            color: var(--accent-primary);
+            line-height: 1.4;
+            min-height: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .copy-button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .copy-button:hover {
+            background: var(--bg-primary);
+            color: var(--accent-primary);
+            border: 1px solid var(--accent-primary);
+        }
+
+        button {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        button:hover {
+            background: var(--accent-secondary);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .success {
+            background: rgba(0, 204, 0, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .error {
+            background: rgba(255, 0, 0, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        #peers-count {
+            float: right;
+            padding: 5px 10px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            color: var(--accent-primary);
+        }
+
+        .view {
+            position: relative;
+        }
+
+        .download-note {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AnonDrop - P2P File Sharing</h1>
+        
+        <div id="setup">
+            <div class="section">
+                <h2>Create or Join Session</h2>
+                <button id="create-session">Create New Session</button>
+                <div style="margin-top: 20px;">
+                    <h3>Or Join Existing Session</h3>
+                    <form id="join-form">
+                        <input type="text" id="session-key-input" placeholder="Enter session key">
+                        <button type="submit">Join Session</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="view hidden">
+            <a href="#" class="back-button" onclick="showSetup()">Back to Menu</a>
+            <div class="section">
+                <h2>Loading...</h2>
+                <div class="status">Connecting to peers...</div>
+            </div>
+        </div>
+
+        <div id="sharing" class="view hidden">
+            <a href="#" class="back-button" onclick="showSetup()">Back to Menu</a>
+            <div class="section">
+                <h2>Share Files</h2>
+                <p>Share this session key with others:</p>
+                <div class="key-container">
+                    <div id="public-key" class="key-display"></div>
+                    <button class="copy-button" onclick="copyKey()">Copy</button>
+                </div>
+                <div class="status">Connected Peers: <span id="peers-count">0</span></div>
+                <button onclick="handleFileSelect()">Select File to Share</button>
+                <div id="status" class="status"></div>
+            </div>
+        </div>
+
+        <div id="receiving" class="view hidden">
+            <a href="#" class="back-button" onclick="showSetup()">Back to Menu</a>
+            <div class="section">
+                <h2>Receiving Files</h2>
+                <div class="status">Connected Peers: <span id="peers-count-receive">0</span></div>
+                <div class="download-note">Files will be saved to the downloads folder</div>
+            </div>
+        </div>
+
+        <div id="status"></div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html> 

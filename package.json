@@ -1,0 +1,34 @@
+{
+  "name": "anondrop",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "P2P file sharing application using Pear",
+  "main": "index.html",
+  "scripts": {
+    "start": "pear run --dev ."
+  },
+  "dependencies": {
+    "@pears/cli": "^1.0.0",
+    "hyperdrive": "^10.0.0",
+    "hyperswarm": "^3.0.0",
+    "localdrive": "^5.0.0"
+  },
+  "pear": {
+    "name": "anondrop",
+    "description": "Simple P2P file sharing app",
+    "entry": "index.html",
+    "runtime": "desktop",
+    "window": {
+      "width": 720,
+      "height": 500,
+      "resizable": true
+    },
+    "bare": {
+      "dependencies": {
+        "fs": "latest",
+        "path": "latest",
+        "crypto": "latest"
+      }
+    }
+  }
+}
